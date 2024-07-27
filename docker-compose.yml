@@ -2,6 +2,31 @@ services:
   djangoapp:
     build: .
     ports:
-      - "5000:5000"
+      - "9001:9001"
     volumes:
       - ./project:/app
+    depends_on:
+      - db
+    networks:
+      - ahorro_network
+  
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: project
+      MYSQL_USER: project_live
+      MYSQL_PASSWORD: holaMundo1!
+      MYSQL_ROOT_PASSWORD: holaMundo1!
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - ahorro_network
+
+volumes:
+  db_data:
+
+networks:
+  ahorro_network:
+    driver: bridge
