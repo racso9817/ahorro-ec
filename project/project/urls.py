@@ -18,17 +18,22 @@ from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
 from project import views
-from project.views import CustomAuthToken, logout_view, register_view
+from project.views import *
+from rest_framework_simplejwt import views as jwt_views
 
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet, basename='user')
-router.register(r'groups', views.GroupViewSet, basename='group')
+# router.register(r'users', views.UserViewSet, basename='user')
+# router.register(r'groups', views.GroupViewSet, basename='group')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('api/login/', CustomAuthToken.as_view(), name='api_login'),
+    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/login/', MyTokenObtainPairView.as_view(), name='api_login'),
     path('api/logout/', logout_view, name='api_logout'),
-    path('api/register/', register_view, name='api_register'),
+    path('api/register/', RegisterView.as_view(), name='api_register'),
+    path('api/users/', UsersListView.as_view(), name='api_users'),
+    path('api/users/<int:pk>/', UserEditView.as_view(), name='api_user_detail'),
+    path('protected/', example_view, name='protected')
 ]
